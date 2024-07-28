@@ -43,11 +43,11 @@ lls.Seurat.metabolism <- function(sce, method = "VISION", missing_values = F, nc
     row.names(count_exp) <- row.names(countexp)
   }
 
-  cat("Metabolic pathway activity scoring in progress\n")
+  cat("[1] Metabolic pathway activity scoring in progress\n")
 
   # VISION
   if (method == "VISION") {
-    cat("VISION-----Metabolic pathway activity scoring in progress\n")
+    cat("[2] VISION-----Metabolic pathway activity scoring in progress\n")
 
     pb <- progress_bar$new(
       format = "  [:bar] :percent :elapsedfull",
@@ -57,24 +57,24 @@ lls.Seurat.metabolism <- function(sce, method = "VISION", missing_values = F, nc
 
     n.umi <- colSums(count_exp)
     pb$tick()
-    cat("Step 1: Calculated total UMI counts.\n")
+    cat("    Step 1: Calculated total UMI counts.\n")
 
     scaled_counts <- t(t(count_exp) / n.umi) * median(n.umi)
     pb$tick()
-    cat("Step 2: Scaled count matrix based on UMI counts.\n")
+    cat("    Step 2: Scaled count matrix based on UMI counts.\n")
 
     vis <- Vision(scaled_counts, signatures = gmtFile)
     pb$tick()
-    cat("Step 3: Created Vision object with scaled counts and signatures.\n")
+    cat("    Step 3: Created Vision object with scaled counts and signatures.\n")
 
     options(mc.cores = ncores)
     vis <- analyze(vis)
     pb$tick()
-    cat("Step 4: Analyzed Vision object with multiple cores---Slightly slow, please wait patiently.\n")
+    cat("    Step 4: Analyzed Vision object with multiple cores---Slightly slow, please wait patiently.\n")
 
     signature_exp <- data.frame(t(vis@SigScores))
     pb$tick()
-    cat("Step 5: Transformed signature scores into data frame.\n")
+    cat("    Step 5: Transformed signature scores into data frame.\n")
   }
 
   # AUCell
@@ -150,7 +150,7 @@ lls.Seurat.metabolism <- function(sce, method = "VISION", missing_values = F, nc
     cat("Step 3: Transformed enrichment scores into data frame.\n")
   }
 
-  cat("Thank you very much for using our R package and hope it is helpful to you. If possible, the relevant citations are as follows: AAA\n")
+  cat("[3] Thank you very much for using our R package and hope it is helpful to you. If possible, the relevant citations are as follows: AAA\n")
 
   sce@assays$METABOLISM$score <- signature_exp
   sce
