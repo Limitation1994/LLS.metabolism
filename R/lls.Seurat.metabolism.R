@@ -7,7 +7,7 @@
 #' @param metabolism.type Type of metabolism pathway to use ("KEGG", "REACTOME", "LLS").
 #' @return A Seurat object with metabolic pathway scores added.
 #' @export
-lls.Seurat.metabolism <- function(sce, method = "VISION", missing_values = F, ncores = 2, metabolism.type = "LLS") {
+lls.Seurat.metabolism <- function(sce, method = "AUCell", missing_values = F, ncores = 2, metabolism.type = "LLS") {
   library(VISION)
   library(AUCell)
   library(GSEABase)
@@ -79,7 +79,7 @@ lls.Seurat.metabolism <- function(sce, method = "VISION", missing_values = F, nc
 
   # AUCell
   if (method == "AUCell") {
-    cat("AUCell-----Pathway activity scoring in progress\n")
+    cat("[2] AUCell-----Pathway activity scoring in progress\n")
 
     pb <- progress_bar$new(
       format = "  [:bar] :percent :elapsedfull",
@@ -89,19 +89,19 @@ lls.Seurat.metabolism <- function(sce, method = "VISION", missing_values = F, nc
 
     cells_rankings <- AUCell_buildRankings(as.matrix(count_exp), nCores = ncores, plotStats = F)
     pb$tick()
-    cat("Step 1: Built cell rankings.\n")
+    cat("  Step 1: Built cell rankings.\n")
 
     geneSets <- getGmt(gmtFile)
     pb$tick()
-    cat("Step 2: Loaded gene sets from GMT file.\n")
+    cat("  Step 2: Loaded gene sets from GMT file.\n")
 
     cells_AUC <- AUCell_calcAUC(geneSets, cells_rankings)
     pb$tick()
-    cat("Step 3: Calculated AUC scores for cells.\n")
+    cat("  Step 3: Calculated AUC scores for cells.\n")
 
     signature_exp <- data.frame(getAUC(cells_AUC))
     pb$tick()
-    cat("Step 4: Transformed AUC scores into data frame.\n")
+    cat("  Step 4: Transformed AUC scores into data frame.\n")
   }
 
   # ssGSEA
